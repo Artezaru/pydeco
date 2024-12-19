@@ -1,6 +1,7 @@
 # pydeco
 
 ## Description
+Python Decorators for functions and methods 
 
 ## Author
 - Name: Artezaru
