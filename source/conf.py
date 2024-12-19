@@ -40,6 +40,7 @@ exclude_patterns = []
 html_theme = 'alabaster'
 html_static_path = ['_static']
 
+html_baseurl = "https://artezaru.github.io/pyframe/"
 
 # Import the Read the Docs theme
 import pydata_sphinx_theme
