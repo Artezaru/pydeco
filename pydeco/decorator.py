@@ -1,19 +1,23 @@
+import re
+import functools
+
 class Decorator(object):
     """
     Base class for decorators.
 
-    The subclasses must implement the _wrapper method with the following signature:
+    The subclasses must implement the ``_wrapper`` method with the following signature:
 
     .. code-block:: python
 
         def _wrapper(self, func, *args, **kwargs):
-            do_something()
-            return func(*args, **kwargs)
+            pre_execute()
+            outputs = func(*args, **kwargs)
+            post_execute()
+            return outputs
 
-    The _wrapper method is can access the function name using the self._get_func_name(func) method.
-
-    The function func is the function to decorate, func_name is the name of the function to decorate.
-    The func_name is constructed usign the name_format attribute. (see below)
+    The subclasses can access several attributes about the function to decorate:
+    
+    - function_signature_name: The signature name of the function. The signature name can be set using the signature_name_format attribute.
     
     Parameters
     ----------
@@ -21,17 +25,17 @@ class Decorator(object):
             The activation status of the decorator.
             Default value is True
 
-        name_format: str, optional
-            The format of the name to display.
+        signature_name_format: str, optional
+            The format of the signature name to display. (see :meth:`set_signature_name_format`)
             Default value is "{name}"
 
-    Attributes
+    Properties
     ----------
         activated: bool
-            The activation status of the decorator.
+            Get and set the activation status of the decorator.
         
-        name_format: str
-            The format of the name to display. (see below)
+        signature_name_format: str
+            Get and set the format of the signature name to display.
         
     Methods
     -------
@@ -47,48 +51,27 @@ class Decorator(object):
         set_deactivated(deactivated: bool = True)
             Sets the decorator deactivation status.
 
-        set_name_format(name_format: str)
-            Sets the name format of the decorator.
+        set_signature_name_format(name_format: str)
+            Sets the format of the name of the decorator.
         
-        get_name_format()
-            Get the name format of the decorator.
-    
-    Formatting name
-    ----------------
-    The name_format attribute is a string that can contain the following format arguments:
+        get_signature_name_format()
+            Get the format of the name of the decorator.
 
-    - {name}: The name of the function
-    - {module}: The module of the function
-    - {qualname}: The qualname of the function
+        get_signature_name(func)
+            Get the signature name of the function.
 
-    Example of valid name_format:
-
-    - "{name}": Display the name of the function
-    - "{module}.{qualname}": Display the module and qualname of the function
-    - "Function {name} from {module}": Display a custom message with the function name and module
-    - "{name} and \\{other}": Display the string "{other}" (use \\ to escape the brackets)
-    - "\\{other {name} other}": Display the string "{other {name} other}" (use \\ to escape the brackets)
-
-    Example of invalid name_format:
-
-    - "{other}": The format argument "other" is not valid
-    - "{name} and {qualname": The brackets are not correctly closed
+        check_signature_name_format(signature_name_format: str)
+            Check if the signature name format is correct.
     """
     
-    correct_format_args = ["name", "module", "qualname"]
+    correct_signature_name_format_args = ["name", "module", "qualname"]
 
     def __init__(self, *, 
         activated: bool = True,
-        name_format: str = "{name}",
+        signature_name_format: str = "{name}",
         ):
-        # Check if given arguments are right types
-        if not isinstance(activated, bool):
-            raise TypeError("Parameter activated is not a booleen.")
-        if not isinstance(deep_name, str):
-            raise TypeError("Parameter name_format is not a string.")
-        # Set the decorator activation status
         self._activated = True
-        self._deep_name = deep_name
+        self._signature_name_format = signature_name_format
 
     # Properties getters and setters
     @property
@@ -102,19 +85,23 @@ class Decorator(object):
         self._activated = activated
     
     @property
-    def name_format(self) -> str:
-        return self._name_format
+    def signature_name_format(self) -> str:
+        return self._signature_name_format
     
-    @name_format.setter
-    def name_format(self, name_format: str):
-        if not self._check_name_format(name_format):
-            raise ValueError("Parameter name_format is not correct.")
-        self._name_format = name_format
+    @signature_name_format.setter
+    def signature_name_format(self, signature_name_format: str):
+        if not self.check_signature_name_format(signature_name_format):
+            raise ValueError("The given name format is not correct.")
+        self._signature_name_format = signature_name_format
     
     # Decorator activation and deactivation (other way around)
     def is_activated(self) -> bool:
         """ 
         Returns decorator activation status.
+
+        .. note:: 
+
+            The activation status can also be get using the activated property: decorator.activated
         
         Returns
         -------
@@ -129,24 +116,32 @@ class Decorator(object):
         return self.activated
 
     def is_deactivated(self) -> bool:
-        """ 
+        """
         Returns decorator deactivation status.
-        
+
+        .. note:: 
+
+            The deactivation status can also be get using the activated property: not decorator.activated
+
         Returns
         -------
-            desactivated: bool
+            deactivated: bool
                 If the decorator is deactivated.
 
         .. seealso::
-        
+
             - :meth:`is_activated` : Returns decorator activation status.
-            - :meth:`set_deactivated` : Sets the decorator deactivation status.
+            - :meth:`set_deactivated` : Sets the decorator deactivation status
         """
         return not self.activated
 
     def set_activated(self, activated: bool = True) -> None:
         """
         Sets the decorator activation status.
+
+        .. note::
+
+            The activation status can also be set using the activated property: decorator.activated = True
         
         Parameters
         ----------
@@ -168,126 +163,106 @@ class Decorator(object):
     def set_deactivated(self, deactivated: bool = True) -> None:
         """
         Sets the decorator deactivation status.
-        
+
+        .. note::
+
+            The deactivation status can also be set using the activated property: decorator.activated = False
+
         Parameters
         ----------
             deactivated: bool, optional
-                The negation of the activation status to apply to the decorator.
+                The deactivation status to apply to the decorator.
                 Default value is True
-        
+
         Raises
         ------
             TypeError: If the given argument is not a booleen.
 
         .. seealso::
-
+        
             - :meth:`is_deactivated` : Returns decorator deactivation status.
             - :meth:`set_activated` : Sets the decorator activation status.
         """
         self.activated = not deactivated
 
-    # Decorator name formatting
-    def set_name_format(self, name_format: str) -> None:
+    # Decorator signature name formatting
+    def set_signature_name_format(self, signature_name_format: str) -> None:
         """
-        Sets the name format of the decorator.
+        Sets the signature name format of the decorator.
+
+        .. note::
         
+            The signature name format can be set using the signature_name_format property: decorator.signature_name_format = "{name}"
+        
+        .. important::
+
+            The signature name can be formatted using the following arguments:
+
+            - {name}: The name of the function
+            - {module}: The module of the function
+            - {qualname}: The qualname of the function
+
+            Example of valid signature_name_format:
+
+            - "{name}": Display the name of the function.
+            - "{module}.{qualname}": Display the module and qualname of the function.
+            - "Function {name} from {module}": Display a custom message with the function name and module.
+            - "{name} and \\{other}": Display the string "{other}" (use \\ to escape the brackets).
+            - "\\{other {name} other}": Display the string "{other {name} other}" (use \\ to escape the brackets).
+
+            Example of invalid signature_name_format:
+
+            - "{other}": The format argument "other" is not valid.
+            - "{name} and {qualname": The brackets are not correctly closed.
+
         Parameters
         ----------
-            name_format: str
-                The format of the name to display.
+            signature_name_format: str
+                The format of the signature name to display.
         
         Raises
         ------
-            ValueError: If the given name format is not correct.
+            ValueError: If the given signature name format is not correct.
             TypeError: If the given argument is not a string.
 
         .. seealso::
 
-            - :meth:`get_name_format` : Allows to get the format of the name of the decorator.
-            
+            - :meth:`get_signature_name_format` : Allows to get the format of the signature name of the decorator.
         """
-        self.name_format = name_format
-    
-    def get_name_format(self) -> str:
+        self.signature_name_format = signature_name_format
+
+    def get_signature_name_format(self) -> str:
         """
-        Get the name format of the decorator.
+        Get the signature name format of the decorator.
+
+        .. note::
+        
+            The signature name format can be get using the signature_name_format property: decorator.signature_name_format
         
         Returns
         -------
-            name_format: str
-                The format of the name to display.
+            signature_name_format: str
+                The format of the signature name to display.
 
         .. seealso::
 
-            - :meth:`set_name_format` : Allows to set the format of the name of the decorator.
+            - :meth:`set_signature_name_format` : Allows to set the format of the signature name of the decorator.
         """
-        return self.name_format
-
-    # Private methods
-    def _check_accolades(self, name_format: str) -> bool:
+        return self.signature_name_format
+    
+    def get_signature_name(self, func) -> str:
         """
-        Check if the accolades are correctly closed.
-
-        Parameters
-        ----------
-            name_format: str
-                The name format to check.
-        
-        Returns
-        -------
-            is_correct: bool
-                If the accolades are correctly closed.
-        """
-        if not isinstance(name_format, str):
-            raise TypeError("Parameter name_format is not a string.")
-        stack = []
-        for char in name_format:
-            if char == "{":
-                stack.append("{")
-            elif char == "}":
-                if len(stack) == 0:
-                    return False
-                stack.pop()
-        return len(stack) == 0
-
-    def _check_name_format(self, name_format: str) -> bool:
-        """
-        Check if the name format is correct.
-
-        Parameters
-        ----------
-            name_format: str
-                The name format to check.
-        
-        Returns
-        -------
-            is_correct: bool
-                If the name format is correct.
-        """
-        if not isinstance(name_format, str):
-            raise TypeError("Parameter name_format is not a string.")
-        if not self._check_accolades(name_format):
-            return False
-        pattern = r'(?<!\\)\{(.*?)(?<!\\)\}'
-        matches = re.findall(pattern, name_format)
-        for match in matches:
-            if match not in self.correct_format_args:
-                return False
-        return True
-
-    def _get_func_name(self, func) -> str:
-        """
-        Get the function name.
+        Get the signature name of the function.
 
         Parameters
         ----------
             func: function
-                The function to get the name from.
-            
+                The function to get the signature name from.
+        
         Returns
         -------
-            func_name: str
-                The function name.
+            signature_name: str
+                The signature name of the function.
         """
         pattern = r'(?<!\\)\{(.*?)(?<!\\)\}'
         # Replace the format with the function attributes
@@ -301,12 +276,76 @@ class Decorator(object):
             "qualname": func.__qualname__,
         }
         # Replace the format with the function attributes
-        formatted_name = re.sub(pattern, lambda match: replace(match, format_args), self._name_format)
+        formatted_name = re.sub(pattern, lambda match: replace(match, format_args), self.signature_name_format)
         formatted_name = formatted_name.replace(r'\{', '{').replace(r'\}', '}')
         return formatted_name
+        
+    def _check_accolades(self, signature_name_format: str) -> bool:
+        """
+        Check if the accolades are correctly closed for the signature name format.
+
+        Parameters
+        ----------
+            signature_name_format: str
+                The signature name format to check.
+        
+        Returns
+        -------
+            is_correct: bool
+                If the accolades are correctly closed.
+
+        Raises
+        ------
+            TypeError: If the given argument is not a string.
+
+        .. seealso::
+        
+            - :meth:`check_signature_name_format` : Check if the signature name format is correct.
+        """
+        if not isinstance(signature_name_format, str):
+            raise TypeError("Parameter signature_name_format is not a string.")
+        stack = []
+        for char in signature_name_format:
+            if char == "{":
+                stack.append("{")
+            elif char == "}":
+                if len(stack) == 0:
+                    return False
+                stack.pop()
+        return len(stack) == 0
+
+    def check_signature_name_format(self, signature_name_format: str) -> bool:
+        """
+        Check if the signature name format is correct.
+
+        Parameters
+        ----------
+            signature_name_format: str
+                The signature name format to check.
+        
+        Returns
+        -------
+            is_correct: bool
+                If the signature name format is correct.
+
+        Raises
+        ------
+            TypeError: If the given argument is not a string.
+        """
+        if not isinstance(signature_name_format, str):
+            raise TypeError("Parameter signature_name_format is not a string.")
+        if not self._check_accolades(signature_name_format):
+            return False
+        pattern = r'(?<!\\)\{(.*?)(?<!\\)\}'
+        matches = re.findall(pattern, signature_name_format)
+        for match in matches:
+            if match not in self.correct_signature_name_format_args:
+                return False
+        return True
 
     # Decorator wrapper
     def __call__(self, func):
+        @functools.wraps(func)
         def wrapped(*args, **kwargs):
             if self._activated:
                 return self._wrapper(func, *args, **kwargs)
@@ -314,8 +353,12 @@ class Decorator(object):
                 return func(*args, **kwargs)
         return wrapped
 
-    def _wrapper(self, func_name, *args, **kwargs):
+    # To be implemented in subclasses
+    def _wrapper(self, func, *args, **kwargs):
         """
         Wrapper method to be implemented in subclasses.
         """
         raise NotImplementedError("Method _wrapper must be implemented in subclasses.")
+
+
+    

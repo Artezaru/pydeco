@@ -6,4 +6,5 @@ __all__ = [
     "__version__",
     "Decorator",
     "class_propagate",
+    "decorators",
 ]

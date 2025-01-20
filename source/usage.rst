@@ -1,10 +1,9 @@
-Usage
-=====
-
-The following sections describe how to use the pydeco package.
+Usage and Examples
+==================
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
-   doc/create_decorator.rst
-   doc/usage.rst
+   ./doc/create_decorator
+   ./doc/use_decorator
+   ./doc/implemented_decorators
