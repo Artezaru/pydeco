@@ -24,7 +24,7 @@ git clone https://github.com/Artezaru/pydeco.git
 
 ## Documentation
 
-Generate the documentation with sphinx
+Generate the html documentation with sphinx
 1. Install the sphinx package and the pydata-sphinx-theme
 
 ```
@@ -44,5 +44,27 @@ make html
 open build/html/index.html
 ```
 
+You can also use LateX to generate a PDF (LateX must be install)
+1. Install the sphinx package and the pydata-sphinx-theme
+
+```
+pip install sphinx
+pip install pydata-sphinx-theme
+```
+
+2. Generate the documentation
+
+```
+make latexpdf
+```
+
+3. Open the documentation in a PDF-reader:
+
+```
+open build/latex/pydeco.pdf
+```
+
 ## License
 See LICENSE
+
+

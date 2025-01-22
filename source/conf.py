@@ -57,3 +57,19 @@ extensions = [
 'sphinx.ext.viewcode',  # Optional: to add links to the source code in the documentation
 # Add other extensions you want
 ]
+
+
+latex_elements = {
+    # Taille du texte
+    'papersize': 'a4paper',
+    # Taille de la fonte
+    'pointsize': '10pt',
+    # Préambule supplémentaire pour le fichier LaTeX
+    'preamble': '',
+}
+
+# Informations pour le titre du document
+latex_documents = [
+    ('index', 'pydeco.tex', 'Pydeco Documentation',
+     'Artezaru', 'manual'),
+]

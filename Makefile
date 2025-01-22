@@ -1,5 +1,4 @@
 # Minimal makefile for Sphinx documentation
-#
 
 # You can set these variables from the command line, and also
 # from the environment for the first two.
@@ -18,3 +17,12 @@ help:
 # "make mode" option.  $(O) is meant as a shortcut for $(SPHINXOPTS).
 %: Makefile
 	@$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
+
+# Cible pour générer la documentation HTML
+html:
+	$(SPHINXBUILD) -b html $(SOURCEDIR) $(BUILDDIR)/html
+
+# Cible pour générer la documentation PDF via LaTeX
+latexpdf:
+	$(SPHINXBUILD) -b latex $(SOURCEDIR) $(BUILDDIR)/latex
+	cd $(BUILDDIR)/latex && pdflatex pydeco.tex && pdflatex pydeco.tex
