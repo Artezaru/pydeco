@@ -2,9 +2,9 @@ Timer Usage
 ===========
 
 The :class:`pydeco.decorators.Timer` decorator is used to measure the runtime of a function.
-``Timer`` is a sub-class of the class :class:`pydeco.LoggerUtils` and can be use for the :class:`pydeco.decorators.FunctionLogger` decorator.
+``Timer`` is a sub-class of the class :class:`pydeco.ProfilerUtils` and can be use for the :class:`pydeco.decorators.FunctionProfiler` decorator.
 In this example, we will only show how to use the ``Timer`` decorator as a standalone decorator.
-The usage of the ``Timer`` decorator into the ``FunctionLogger`` decorator is described in the documentation :doc:`./function_logger_example`.
+The usage of the ``Timer`` decorator into the ``FunctionProfiler`` decorator is described in the documentation :doc:`./function_profiler_example`.
 
 First we need to import the ``Timer`` decorator with the following command:
 

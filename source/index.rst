@@ -13,6 +13,9 @@ The API of the package is described in the documentation :doc:`./api` section.
 The package ``pydeco`` also provides some decorators ready to use.
 A User Guide is available in the documentation :doc:`./usage` section.
 
+Some example python files are available in the ``examples`` directory of the package.
+You can also find them in the the documentation :doc:`./usage` section.
+
 .. toctree::
    :maxdepth: 1
    :caption: Contents:

@@ -9,6 +9,7 @@ The following list shows how to use them:
 
    ./implemented_decorators/timer_example
    ./implemented_decorators/memory_example
-   ./implemented_decorators/function_logger_example
+   ./implemented_decorators/function_profiler_example
+   ./implemented_decorators/create_profiler_utils
 
 The API documentation for the implemented decorators is available in the section :doc:`./decorators`.

@@ -1,20 +1,23 @@
-from .logger_utils import LoggerUtils
+from .profiler_utils import ProfilerUtils
 import psutil
 
-class Memory(LoggerUtils):
+class Memory(ProfilerUtils):
     """
     Timer ``Memory`` is a decorator that measures the memory usage of a function.
 
-    The ``Memory`` class is a subclass of the :class:`pydeco.decorators.LoggerUtils` base class.
+    The ``Memory`` class is a subclass of the :class:`pydeco.decorators.ProfilerUtils` base class.
 
-    The `data_name` attribute is set to "memory usage".
+    The ``data_name`` attribute is set to "memory usage".
 
     .. note::
     
-        The memory handle result is given in bytes. It can be summed to get the total memory usage. The string_result method converts the result in bytes, kilobytes, megabytes.
+        The memory handle result is given in bytes. It can be summed to get the total memory usage. The string_value method converts the result in bytes, kilobytes, megabytes.
 
     """
     data_name: str = "memory usage"
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
     def pre_execute(self, func, *args, **kwargs) -> None:
         """
@@ -40,9 +43,9 @@ class Memory(LoggerUtils):
         """
         return self.post_execute_memory - self.pre_execute_memory
     
-    def string_result(self, result) -> str:
+    def string_value(self, result) -> str:
         """
-        Converts the memory usage in bytes, kilobytes, megabytes in the format "memory usage : {megabytes}MB {kilobytes}KB {bytes}B".
+        Converts the memory usage in bytes, kilobytes, megabytes in the format "{megabytes}MB {kilobytes}KB {bytes}B".
         
         Parameters
         ----------
@@ -65,7 +68,7 @@ class Memory(LoggerUtils):
         # Conversion
         megabytes, remainder = divmod(result, 1024**2)
         kilobytes, ubytes = divmod(remainder, 1024)
-        return f"memory usage : {megabytes}MB {kilobytes}KB {ubytes}B"
+        return f"{megabytes}MB {kilobytes}KB {ubytes}B"
 
 
 

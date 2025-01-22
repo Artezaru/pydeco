@@ -1,11 +1,11 @@
-from .function_logger import FunctionLogger
+from .function_profiler import FunctionProfiler
 from .timer import Timer
 from .memory import Memory
-from .logger_utils import LoggerUtils
+from .profiler_utils import ProfilerUtils
 
 __all__ = [
-    "LoggerUtils",
-    "FunctionLogger",
-    "Timer",
-    "Memory",
+    'FunctionProfiler',
+    'Timer',
+    'Memory',
+    'ProfilerUtils'
 ]

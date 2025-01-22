@@ -2,9 +2,9 @@ Memory Usage
 ============
 
 The :class:`pydeco.decorators.Memory` decorator is used to measure the runtime of a function.
-``Memory`` is a sub-class of the class :class:`pydeco.LoggerUtils` and can be use for the :class:`pydeco.decorators.FunctionLogger` decorator.
+``Memory`` is a sub-class of the class :class:`pydeco.ProfilerUtils` and can be use for the :class:`pydeco.decorators.FunctionProfiler` decorator.
 In this example, we will only show how to use the ``Memory`` decorator as a standalone decorator.
-The usage of the ``Memory`` decorator into the ``FunctionLogger`` decorator is described in the documentation :doc:`./function_logger_example`.
+The usage of the ``Memory`` decorator into the ``FunctionProfiler`` decorator is described in the documentation :doc:`./function_profiler_example`.
 
 First we need to import the ``Memory`` decorator with the following command:
 
