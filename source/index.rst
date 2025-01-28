@@ -26,11 +26,11 @@ You can also find them in the the documentation :doc:`./usage` section.
 Author
 ------
 
-The package ``pygpt`` was created by the following author:
+The package ``pydeco`` was created by the following author:
 
 - **Name**: Artezaru
 - **Email**: artezaru.github@proton.me
-- **GitHub**: [Artezaru](https://github.com/Artezaru/pygpt.git)
+- **GitHub**: [Artezaru](https://github.com/Artezaru/pydeco.git)
 
 License
 -------
