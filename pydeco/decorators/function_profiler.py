@@ -20,7 +20,7 @@ class FunctionProfiler(Decorator):
 
     The report of the profiled data can be formatted in three different ways: "datetime", "function", "cumulative".
 
-    Properties
+    Parameters
     ----------
     profiler_utils : Union[Type, List[Type]]
         The list of sub-classes of the ``ProfilerUtils`` class to connect to the ``FunctionProfiler``.

@@ -23,10 +23,18 @@ You can also find them in the the documentation :doc:`./usage` section.
    ./api
    ./usage
 
-The package ``pydeco`` was created by the following author:
+Author
+------
 
-- Name: Artezaru
-- Email: artezaru.github@proton.me
-- GitHub: [Artezaru](https://github.com/Artezaru/pydeco.git)
+The package ``pygpt`` was created by the following author:
+
+- **Name**: Artezaru
+- **Email**: artezaru.github@proton.me
+- **GitHub**: [Artezaru](https://github.com/Artezaru/pygpt.git)
+
+License
+-------
 
 Please cite and refer to the package as mentioned in the License.
+
+``pydeco`` is an open-source project, and contributions are welcome! If you encounter any issues or have feature requests, please submit them on GitHub.

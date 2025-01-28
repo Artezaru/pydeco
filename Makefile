@@ -1,7 +1,5 @@
-# Minimal makefile for Sphinx documentation
+# Makefile for Sphinx documentation
 
-# You can set these variables from the command line, and also
-# from the environment for the first two.
 SPHINXOPTS    ?=
 SPHINXBUILD   ?= sphinx-build
 SOURCEDIR     = source
@@ -18,11 +16,11 @@ help:
 %: Makefile
 	@$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
 
-# Cible pour générer la documentation HTML
+# Target to generate the HTML documentation
 html:
 	$(SPHINXBUILD) -b html $(SOURCEDIR) $(BUILDDIR)/html
 
-# Cible pour générer la documentation PDF via LaTeX
+# Target to generate the PDF documentation
 latexpdf:
 	$(SPHINXBUILD) -b latex $(SOURCEDIR) $(BUILDDIR)/latex
 	cd $(BUILDDIR)/latex && pdflatex pydeco.tex && pdflatex pydeco.tex
